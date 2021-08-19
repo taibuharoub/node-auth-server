@@ -18,6 +18,8 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Please add a phone number"],
       unique: true,
+      minlength: 12,
+      maxlength: 12,
     },
     role: {
       type: String,
@@ -41,4 +43,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 userSchema.plugin(uniqueValidator);
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);
