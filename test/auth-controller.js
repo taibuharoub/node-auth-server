@@ -1,4 +1,4 @@
-import chai, { expect } from "chai";
+/* import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import server from "../app.js";
 import mongoose from "mongoose";
@@ -52,3 +52,4 @@ describe("Auth Controller", () => {
 
   //end
 });
+ */
