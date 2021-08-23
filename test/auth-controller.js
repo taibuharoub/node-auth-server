@@ -50,6 +50,17 @@ describe("Auth Controller", () => {
       });
   });
 
+  it("should return a user with this account could not be found and a 401", (done) => {
+    chai
+      .request(server)
+      .post("/auth/login")
+      .send({ email: "taibu@taibu.com", password: "123456" })
+      .then((res) => {
+        expect(res.status).to.equal(401);
+        done();
+      });
+  });
+
   //end
 });
  */
