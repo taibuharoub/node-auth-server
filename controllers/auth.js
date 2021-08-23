@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import User from "../models/User.js";
+import sendEmail from "../utils/sendGrid.js";
 
 export const signup = async (req, res, next) => {
   try {
@@ -23,6 +24,13 @@ export const signup = async (req, res, next) => {
     });
     const result = await user.save();
     res.status(201).json({ message: "User created!", userId: result._id });
+    const options = {
+      to: email,
+      from: process.env.FROM,
+      subject: "Target Technology Singup",
+      html: `<p>${name}, Welcome to Target technology</p>`,
+    };
+    sendEmail(options);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
