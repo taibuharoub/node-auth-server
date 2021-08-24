@@ -89,3 +89,55 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateUser = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed.");
+      error.statusCode = 422;
+      error.data = errors.array();
+      throw error;
+    }
+    await User.findByIdAndUpdate(req.userId, req.body);
+    res.status(200).json({
+      message: "User details successfully updated",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+export const updatePassword = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed.");
+      error.statusCode = 422;
+      error.data = errors.array();
+      throw error;
+    }
+    const { newPassword, currentPassword } = req.body;
+    const user = await User.findById(req.userId);
+    const isEqual = await bcrypt.compare(currentPassword, user.password);
+    if (!isEqual) {
+      const error = new Error("Wrong or Incorrect password!");
+      error.statusCode = 401;
+      throw error;
+    }
+    const hashedPw = await bcrypt.hash(newPassword, 12);
+    user.password = hashedPw;
+    await user.save();
+    res.status(200).json({
+      message: "Successfully updated your password",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};

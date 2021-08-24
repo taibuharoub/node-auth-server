@@ -1,7 +1,12 @@
 import express from "express";
 import { body } from "express-validator";
 
-import { signup, login } from "../controllers/auth.js";
+import {
+  signup,
+  login,
+  updateUser,
+  updatePassword,
+} from "../controllers/auth.js";
 import User from "../models/User.js";
 import isAuth from "../middleware/isAuth.js";
 
@@ -52,6 +57,30 @@ router.post(
       .isAlphanumeric(),
   ],
   login
+);
+
+router.put(
+  "/updateuser",
+  body("name").trim().not().isEmpty().withMessage("Please add a name"),
+  isAuth,
+  updateUser
+);
+
+router.put(
+  "/updatepassword",
+  [
+    body("currentPassword", "Please provide your current password")
+      .isLength({ min: 6 })
+      .isAlphanumeric(),
+    body(
+      "newPassword",
+      "Please Password has to be atleast 6 characters and Alphanumeric"
+    )
+      .isLength({ min: 6 })
+      .isAlphanumeric(),
+  ],
+  isAuth,
+  updatePassword
 );
 
 export default router;
