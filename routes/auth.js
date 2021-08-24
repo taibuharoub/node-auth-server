@@ -3,6 +3,7 @@ import { body } from "express-validator";
 
 import { signup, login } from "../controllers/auth.js";
 import User from "../models/User.js";
+import isAuth from "../middleware/isAuth.js";
 
 const router = express.Router();
 
