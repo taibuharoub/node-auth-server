@@ -6,6 +6,9 @@ import {
   login,
   updateUser,
   updatePassword,
+  reset,
+  resetPassword,
+  passwordReset,
 } from "../controllers/auth.js";
 import User from "../models/User.js";
 import isAuth from "../middleware/isAuth.js";
@@ -82,5 +85,20 @@ router.put(
   isAuth,
   updatePassword
 );
+
+router.post(
+  "/reset",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email address.")
+      .normalizeEmail(),
+  ],
+  reset
+);
+
+router.get("/passwordreset/:token", passwordReset);
+
+router.put("/resetpassword", resetPassword);
 
 export default router;
