@@ -9,6 +9,7 @@ import {
   reset,
   resetPassword,
   passwordReset,
+  altReset,
 } from "../controllers/auth.js";
 import User from "../models/User.js";
 import isAuth from "../middleware/isAuth.js";
@@ -42,8 +43,8 @@ router.post(
       .not()
       .isEmpty()
       .withMessage("Please add a phone number")
-      .isLength({ min: 12, max: 12 })
-      .withMessage("Please provide a 12 digit number"),
+      .isLength({ min: 13, max: 13 })
+      .withMessage("Please provide a 13 digit number"),
   ],
   signup
 );
@@ -100,5 +101,19 @@ router.post(
 router.get("/passwordreset/:token", passwordReset);
 
 router.put("/resetpassword", resetPassword);
+
+router.post(
+  "/altreset",
+  [
+    body("phoneNumber")
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage("Please add a phone number")
+      .isLength({ min: 13, max: 13 })
+      .withMessage("Please provide a 12 digit number"),
+  ],
+  altReset
+);
 
 export default router;

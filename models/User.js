@@ -18,8 +18,8 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Please add a phone number"],
       unique: true,
-      minlength: 12,
-      maxlength: 12,
+      minlength: 13,
+      maxlength: 13,
     },
     role: {
       type: String,
@@ -38,6 +38,8 @@ const userSchema = new Schema(
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+    verificationCode: String,
+    verificationCodeExpiration: Date,
   },
   { timestamps: true }
 );
