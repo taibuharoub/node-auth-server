@@ -163,9 +163,10 @@ export const reset = async (req, res, next) => {
     user.resetPasswordToken = token;
     user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; //10 mins
     await user.save();
-    const resetUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/auth/passwordreset/${token}`;
+    // const resetUrl = `${req.protocol}://${req.get(
+    //   "host"
+    // )}/auth/passwordreset/${token}`;
+    const resetUrl = `http://127.0.0.1:5500/?token=${token}`;
 
     const options = {
       to: email,
@@ -207,10 +208,6 @@ export const passwordReset = async (req, res, next) => {
       throw error;
     }
     res.status(200).json({ message: "Password reset page/form" });
-    // res.status(200).send(
-    //   // eslint-disable-next-line quotes
-    //   '<form method="PUT" action="/resetpassword"><input type="password" name="newPassword"><button type="submit">Submit</button></form>'
-    // );
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -228,8 +225,7 @@ export const resetPassword = async (req, res, next) => {
       error.data = errors.array();
       throw error;
     }
-    const token = req.params.token;
-    const { newPassword } = req.body;
+    const { newPassword, token } = req.body;
     const user = await User.findOne({
       resetPasswordToken: token,
       resetPasswordExpire: { $gt: Date.now() },
@@ -244,7 +240,7 @@ export const resetPassword = async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
-    res.status(200).json({ message: "Redirect User to set new password" });
+    res.status(200).json({ message: "Password Reset Successfully" });
     const options = {
       to: user.email,
       from: process.env.FROM,
