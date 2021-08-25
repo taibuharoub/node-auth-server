@@ -298,3 +298,52 @@ export const altReset = async (req, res, next) => {
     next(err);
   }
 };
+
+export const altResetPassword = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed.");
+      error.statusCode = 422;
+      error.data = errors.array();
+      throw error;
+    }
+    const { phoneNumber, verificationCode, newPassword } = req.body;
+    const user = await User.findOne({ phoneNumber: phoneNumber });
+    if (!user) {
+      const error = new Error("Account not found");
+      error.statusCode = 422;
+      throw error;
+    }
+    const isValid = await bcrypt.compare(
+      verificationCode,
+      user.verificationCode
+    );
+    if (!isValid) {
+      const error = new Error("Code verification failed.");
+      error.statusCode = 422;
+      throw error;
+    }
+    const isActive = user.verificationCodeExpiration > Date.now();
+    if (!isActive) {
+      const error = new Error(
+        "Code verification Expired, please request a new one."
+      );
+      error.statusCode = 422;
+      throw error;
+    }
+    const hashedPw = await bcrypt.hash(newPassword, 12);
+    user.password = hashedPw;
+    user.verificationCode = undefined;
+    user.verificationCodeExpiration = undefined;
+    await user.save();
+    res.status(200).json({
+      message: "Password Reset Successfully, login with new password",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
